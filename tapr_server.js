@@ -351,7 +351,7 @@ function getMatchScore(taps1, taps2) {
 
   var l = Math.min(taps1.length, taps2.length);
   var score = 0;
-  for (var i = 0; i < l; i++) {
+  for (var i = 1; i < l; i++) {
     var tap1 = taps1[taps1.length - i],
       tap2 = taps2[taps2.length - i];
     console.log("comparing:" + tap1 + " and:" + tap2);
