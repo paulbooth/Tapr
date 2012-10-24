@@ -10,6 +10,8 @@ var express = require('express'),
 
 var https = require('https'), http = require('http');
 
+var TAP_CUTOFF_TIME = 5000;
+
 // ME MONGO ME STORE DATA
 var mongo = require('mongodb'),
   Server = mongo.Server,
@@ -286,7 +288,9 @@ function addUser(id, callback) {
   });
 }
 
-function findTaps(id, callback) {
+
+// gets recent taps
+function findTaps(id, time, callback) {
   console.log("findtaps called:" + id);
   db.open(function(err, db) {
     db.collection('taps', function(err, collection) {
@@ -297,7 +301,11 @@ function findTaps(id, callback) {
             console.dir(item);
             //console.log("created at " + new Date(item._id.generationTime) + "\n")
             //taps += "\n" + item.uid + ":" + item.access_token;
-            taps.push(item.tap);
+            if (time - item.tap > TAP_CUTOFF_TIME) {
+              collection.remove(item);
+            } else {
+              taps.push(item.tap);
+            }
           }
           // Null signifies end of iterator
           if(item == null) {
