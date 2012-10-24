@@ -210,7 +210,8 @@ app.listen(PORT_NUMBER);
 
 function findMatches(id, callback) {
   console.log ("trying to find matches for " + id);
-  findTaps(id, function(mytaps) {
+  var curTime = (new Date()).getTime();
+  findTaps(id, curTime, function(mytaps) {
     console.log("First step, " + id + " has the following taps:" + mytaps);
     if (!mytaps.length) {
       callback([]);
@@ -225,7 +226,7 @@ function findMatches(id, callback) {
         if (user.id != id) {
           console.log("finding taps for matchscore for id:" + user.id);
 
-          findTaps(user.id, function(taps) {
+          findTaps(user.id, curTime, function(taps) {
             console.log("taps found:" + taps);
             if (taps.length) {
               console.log("getting score");
