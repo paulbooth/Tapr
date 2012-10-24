@@ -217,15 +217,14 @@ function findMatches(id, callback) {
     console.log("accessing database");
     findUsers(function(users){
       users.forEach(function(user) {
-        console.log(user);
+        console.log(user.id);
         if (user.id != id) {
-          console.log("finding taps for matchscore for id:" + item.id);
+          console.log("finding taps for matchscore for id:" + user.id);
 
           findTaps(user.id, function(taps) {
-            console.log("Found taps for id " + id + ":" + taps);
             if (taps.length) {
               var score = getMatchScore(mytaps, taps);
-              matches.push({score: score, item: item });
+              matches.push({score: score, id: user.id });
             }
           });
         }
@@ -307,7 +306,7 @@ function findUsers(callback) {
             console.dir(item);
             //console.log("created at " + new Date(item._id.generationTime) + "\n")
             //users += "\n" + item.uid + ":" + item.access_token;
-            users.push(item.tap);
+            users.push(item);
           }
           // Null signifies end of iterator
           if(item == null) {
