@@ -258,7 +258,7 @@ function addTap(id, tap, callback) {
       db.collection('taps', function(err, collection) {        
         collection.insert({'id':id, 'tap':tap});
         console.log("added tap " + id + ":" + tap);
-        db.close();
+        // db.close();
         callback();
       });
     // });
@@ -282,7 +282,7 @@ function addUser(id, callback) {
               collection.insert({'id':id});
               console.log("Added user:" + id);
             }
-            db.close();
+            // db.close();
             callback();
           }
         });
@@ -313,7 +313,7 @@ function findTaps(id, time, callback) {
           }
           // Null signifies end of iterator
           if(item == null) {
-            db.close();
+            // db.close();
             callback(taps);
           }
         });
@@ -336,7 +336,7 @@ function findUsers(callback) {
           }
           // Null signifies end of iterator
           if(item == null) {
-            db.close();
+            // db.close();
             callback(users);
           }
         });
