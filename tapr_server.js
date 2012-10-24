@@ -59,9 +59,17 @@ app.get('/tap', function(req, res) {
     return;
   }
   addTap(req.session.user.id, (new Date()).getTime(), function() {
-    res.redirect('/');
+    res.redirect('/results');
   });
 });
+
+app.get('/results', function(req, res) {
+  if (!req.session.access_token) {
+    res.redirect('/login');
+    return;
+  }
+  res.render('see_results.jade', {user: req.session.user});
+})
 
 // First part of Facebook auth dance
 app.get('/login', function(req, res){
