@@ -200,6 +200,7 @@ function findMatches(id, callback) {
               //console.log("created at " + new Date(item._id.generationTime) + "\n")
               //matches += "\n" + item.uid + ":" + item.access_token;
               findTaps(item.id, function(taps) {
+                console.log("Found taps for id " + id + ":" + taps);
                 if (taps.length) {
                   var score = getMatchScore(mytaps, taps);
                   matches.push({score: score, item: item });
