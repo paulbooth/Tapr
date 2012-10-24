@@ -156,6 +156,29 @@ app.get('/logout', function(req, res) {
   res.redirect(fbLogoutUri);
 });
 
+app.get('/tags', function(req, res) {
+  db.open(function(err, db) {
+    db.collection('tags', function(err, collection) {
+      collection.find( function(err, cursor) {
+        var result = "";
+        cursor.each(function(err, item) {
+          if(item != null) {
+            console.dir(item);
+            //console.log("created at " + new Date(item._id.generationTime) + "\n")
+            result += "\n" + item.id + ":" + item.tag;
+          }
+          // Null signifies end of iterator
+          if(item == null) {
+            db.close();
+            res.setHeader('Content-Type', 'text/plain');
+            res.send(result);
+          }
+        });
+      });          
+    });
+  });
+});
+
 app.listen(PORT_NUMBER);
 
 
@@ -236,7 +259,7 @@ function findTaps(id, callback) {
             console.dir(item);
             //console.log("created at " + new Date(item._id.generationTime) + "\n")
             //taps += "\n" + item.uid + ":" + item.access_token;
-            taps.push(item);
+            taps.push(item.tag);
           }
           // Null signifies end of iterator
           if(item == null) {
