@@ -41,8 +41,8 @@ app.get('/', function(req, res) {
   console.log("id at /: " + req.session.user.id);
   findMatches(req.session.user.id, function(matches) {
     locals.matches = matches;
-    console.log("LOCALS HERE:");
-    console.log(locals);
+    // console.log("LOCALS HERE:");
+    // console.log(locals);
     console.log("Matches:");
     console.log(JSON.stringify(matches, undefined, 2));
     res.render('index.jade', locals);
@@ -100,8 +100,8 @@ app.get('/perms', function(req, res){
       });
 
       fbres.on('end', function() {
-        console.log("ACCESS TOKEN RIGHT HERE");
-        console.log(output);
+        // console.log("ACCESS TOKEN RIGHT HERE");
+        // console.log(output);
         // parse the text to get the access token
         req.session.access_token = output.replace(/access_token=/,"").replace(/&expires=\d+$/, "");
 
@@ -220,6 +220,8 @@ function findMatches(id, callback) {
         collection.find(function(err, cursor) {
           var matches = [];
           cursor.each(function(err, item) {
+            console.log("USER");
+            console.log(item);
             if(item != null && item.id != id) {
               //console.dir(item);
               //console.log("created at " + new Date(item._id.generationTime) + "\n")
