@@ -296,7 +296,7 @@ function findTaps(id, callback) {
         var taps = [];
         cursor.each(function(err, item) {
           if(item != null) {
-            console.dir(item);
+            //console.dir(item);
             //console.log("created at " + new Date(item._id.generationTime) + "\n")
             //taps += "\n" + item.uid + ":" + item.access_token;
             taps.push(item.tap);
