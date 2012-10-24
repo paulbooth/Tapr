@@ -223,8 +223,11 @@ function findMatches(id, callback) {
           console.log("finding taps for matchscore for id:" + user.id);
 
           findTaps(user.id, function(taps) {
+            console.log("taps found:" + taps);
             if (taps.length) {
+              console.log("getting score");
               var score = getMatchScore(mytaps, taps);
+              console.log("done with score:" + score);
               matches.push({score: score, id: user.id });
             }
           });
