@@ -54,7 +54,7 @@ app.get('/tap', function(req, res) {
     res.redirect('/login');
     return;
   }
-  addTap(req.session.access_token, (new Date()).getTime(), function() {
+  addTap(req.session.user.id, (new Date()).getTime(), function() {
     res.redirect('/');
   });
 });
