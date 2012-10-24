@@ -43,6 +43,7 @@ app.get('/', function(req, res) {
   var locals = {user: req.session.user};
   console.log("id at /: " + req.session.user.id);
   findMatches(req.session.user.id, function(matches) {
+    console.log("Back from FindMatches:" + JSON.stringify(matches));
     locals.matches = matches;
     // console.log("LOCALS HERE:");
     // console.log(locals);
@@ -305,8 +306,8 @@ function findTaps(id, time, callback) {
             //console.log("created at " + new Date(item._id.generationTime) + "\n")
             //taps += "\n" + item.uid + ":" + item.access_token;
             if (time - item.tap > TAP_CUTOFF_TIME) {
+              console.log("removing:" + JSON.stringify(item) + " since time is " + (time - item.tap));
               // collection.remove(item);
-              console.log("removing:" + JSON.stringify(item))
             } else {
               taps.push(item.tap);
             }
@@ -314,6 +315,7 @@ function findTaps(id, time, callback) {
           // Null signifies end of iterator
           if(item == null) {
             // db.close();
+            console.log("findTaps returning")
             callback(taps);
           }
         });
