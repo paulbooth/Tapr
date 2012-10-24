@@ -10,6 +10,17 @@ var express = require('express'),
 
 var https = require('https'), http = require('http');
 
+// ME MONGO ME STORE DATA
+var mongo = require('mongodb'),
+  Server = mongo.Server,
+  Connection = mongo.Connection,
+  Db = mongo.Db;
+var mongo_host = process.env['MONGO_NODE_DRIVER_HOST'] != null ? process.env['MONGO_NODE_DRIVER_HOST'] : 'localhost';
+var mongo_port = process.env['MONGO_NODE_DRIVER_PORT'] != null ? process.env['MONGO_NODE_DRIVER_PORT'] : Connection.DEFAULT_PORT;
+
+console.log("Connecting to mongo at " + mongo_host + ":" + mongo_port);
+var db = new Db('taprdb', new Server(mongo_host, mongo_port, {}), {safe:false});
+
 // For cookies! So each person who connects is not all the same person
 var MemoryStore = require('connect').session.MemoryStore;
 app.use(express.cookieParser());
@@ -27,9 +38,14 @@ app.get('/', function(req, res) {
   }
 
   var locals = {user: req.session.user};
-  console.log("LOCALS HERE:");
-  console.log(locals);
-  res.render('index.jade', locals);
+  findMatches(req.session.user.id, function(matches) {
+    locals.matches = matches;
+    console.log("LOCALS HERE:");
+    console.log(locals);
+    console.log("Matches:");
+    console.log(JSON.stringify(matches, undefined, 2));
+    res.render('index.jade', locals);
+  })
 });
 
 app.get('/tap', function(req, res) {
@@ -37,6 +53,7 @@ app.get('/tap', function(req, res) {
     res.redirect('/login');
     return;
   }
+  addTap(req.session.access_token, (new Date()).getTime());
   res.redirect('/');
 });
 
@@ -140,3 +157,129 @@ app.get('/logout', function(req, res) {
 });
 
 app.listen(PORT_NUMBER);
+
+
+function findMatches(id, callback) {
+  findTaps(id, function(mytaps) {
+    if (!mytaps.length) {
+      callback([]);
+      return;
+    }
+    db.open(function(err, db) {
+      db.collection('users', function(err, collection) {
+        collection.find(function(err, cursor) {
+          var matches = [];
+          cursor.each(function(err, item) {
+            if(item != null && item.id != id) {
+              //console.dir(item);
+              //console.log("created at " + new Date(item._id.generationTime) + "\n")
+              //matches += "\n" + item.uid + ":" + item.access_token;
+              findTaps(item.id, function(taps) {
+                if (taps.length) {
+                  var score = getMatchScore(mytaps, taps);
+                  matches.push({score: score, item: item });
+                }
+              })
+              
+            }
+            // Null signifies end of iterator
+            if(item == null) {
+              db.close();
+              matches = matches.sort(function(a, b) { return a.score - b.score;})
+              callback(matches);
+            }
+          });
+        });          
+      });
+    });
+  });
+}
+
+function addTap(id, tap) {
+  addUser(id);
+  db.open(function(err, db) {
+    db.collection('taps', function(err, collection) {        
+      collection.insert({'id':id, 'tap':tap});
+    });
+  });
+}
+
+function addUser(id) {
+  db.open(function(err, db) {
+    db.collection('uses', function(err, collection) {
+      collection.find(function(err, cursor) {
+        var alreadyStored = false;
+        cursor.each(function(err, item) {
+          if(item != null) {
+            alreadyStored = true;
+          }
+          // Null signifies end of iterator
+          if(item == null) {
+            if (!alreadyStored) {
+              collection.insert({'id':id});
+            }
+            db.close();
+          }
+        });
+      });
+    });
+  });
+}
+
+function findTaps(id, callback) {
+  db.open(function(err, db) {
+    db.collection('taps', function(err, collection) {
+      collection.find({'id', id}, function(err, cursor) {
+        var taps = [];
+        cursor.each(function(err, item) {
+          if(item != null) {
+            console.dir(item);
+            //console.log("created at " + new Date(item._id.generationTime) + "\n")
+            //taps += "\n" + item.uid + ":" + item.access_token;
+            taps.push(item);
+          }
+          // Null signifies end of iterator
+          if(item == null) {
+            db.close();
+            callback(taps);
+          }
+        });
+      });          
+    });
+  });
+}
+
+function getMatchScore(taps1, taps2) {
+
+  l = Math.min(taps1.length, taps2.length);
+  score = 0;
+  for (var i = 0; i < l; i++) {
+    var tap1 = taps1[taps1.length - i],
+      tap2 = taps2[taps2.length - i];
+    score = Math.abs(tap1 - tap2);
+  }
+  return score;
+}
+
+
+function DTWDistance(s, t) {
+    n = s.length; m = t.length;
+
+    declare int DTW[0..n, 0..m]
+    declare int i, j, cost
+
+    for i := 1 to m
+        DTW[0, i] := infinity
+    for i := 1 to n
+        DTW[i, 0] := infinity
+    DTW[0, 0] := 0
+
+    for i := 1 to n
+        for j := 1 to m
+            cost:= d(s[i], t[j])
+            DTW[i, j] := cost + minimum(DTW[i-1, j  ],    // insertion
+                                        DTW[i  , j-1],    // deletion
+                                        DTW[i-1, j-1])    // match
+
+    return DTW[n, m]
+}
