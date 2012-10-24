@@ -227,6 +227,7 @@ function findMatches(id, callback) {
               //console.dir(item);
               //console.log("created at " + new Date(item._id.generationTime) + "\n")
               //matches += "\n" + item.uid + ":" + item.access_token;
+              console.log("finding taps for matchscore for id:" + item.id);
               findTaps(item.id, function(taps) {
                 console.log("Found taps for id " + id + ":" + taps);
                 if (taps.length) {
@@ -290,6 +291,7 @@ function addUser(id, callback) {
 }
 
 function findTaps(id, callback) {
+  console.log("findtaps called:" + id);
   // db.open(function(err, db) {
     db.collection('taps', function(err, collection) {
       collection.find({'id': id}, function(err, cursor) {
