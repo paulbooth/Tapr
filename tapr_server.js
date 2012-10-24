@@ -217,6 +217,7 @@ function findMatches(id, callback) {
     console.log("accessing database");
     findUsers(function(users){
       users.forEach(function(user) {
+        console.log(user);
         if (user.id != id) {
           console.log("finding taps for matchscore for id:" + item.id);
 
