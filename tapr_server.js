@@ -10,7 +10,7 @@ var express = require('express'),
 
 var https = require('https'), http = require('http');
 
-var TAP_CUTOFF_TIME = 10000;
+var TAP_CUTOFF_TIME = 20000;
 
 // ME MONGO ME STORE DATA
 var mongo = require('mongodb'),
