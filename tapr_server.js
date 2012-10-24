@@ -354,6 +354,7 @@ function getMatchScore(taps1, taps2) {
   for (var i = 0; i < l; i++) {
     var tap1 = taps1[taps1.length - i],
       tap2 = taps2[taps2.length - i];
+    console.log("comparing:" + tap1 + " and:" + tap2);
     score = Math.abs(tap1 - tap2);
   }
   return score;
