@@ -18,13 +18,27 @@ app.use(express.session({ secret: "tapr", store: new MemoryStore({ reapInterval:
 app.set('views', __dirname + '/views');
 app.use(express.static(__dirname + '/public'));
 
+// The page for tapr
 app.get('/', function(req, res) {
-  res.render('index.jade');
+  if (!req.session.access_token) {
+    console.log("NO ACCESS TOKEN AT /")
+    res.redirect('/'); // Start the auth flow
+    return;
+  }
+
+  var locals = {user: req.session.user};
+  console.log("LOCALS HERE:");
+  console.log(locals);
+  res.render('index.jade', locals);
 });
 
 app.get('/tap', function(req, res) {
-
-})
+  if (!req.session.access_token) {
+    res.redirect('/login');
+    return;
+  }
+  res.redirect('/');
+});
 
 // First part of Facebook auth dance
 app.get('/login', function(req, res){
@@ -109,23 +123,20 @@ app.get('/basicinfo', function(req, res) {
 
       fbres.on('end', function() {
         req.session.user = JSON.parse(output);
-        res.redirect('/tapr');
+        res.redirect('/');
       });
   });
 });
 
-// The page for tapr
-app.get('/tapr', function(req, res) {
+app.get('/logout', function(req, res) {
   if (!req.session.access_token) {
-    console.log("NO ACCESS TOKEN AT tapr.")
-    res.redirect('/'); // Start the auth flow
+    res.redirect('/');
     return;
   }
-
-  var locals = {user: req.session.user};
-  console.log("LOCALS HERE:");
-  console.log(locals);
-  res.render('tapr.jade', locals);
+  var fbLogoutUri = 'https://www.facebook.com/logout.php?next=' + hostUrl + '/&access_token=' + req.session.access_token
+  req.session.user = null;
+  req.session.access_token = null;
+  res.redirect(fbLogoutUri);
 });
 
 app.listen(PORT_NUMBER);

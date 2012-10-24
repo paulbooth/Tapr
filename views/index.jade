@@ -5,7 +5,9 @@ html(lang='en')
     title Tapr
     link(rel='stylesheet', href='bootstrap/css/bootstrap.min.css')
   body
-    h1 Welcome to Tapr
+    h1 Welcome to Tapr, #{user.name}
+    div
+      a(href='/logout') logout
     div Tapr connects you.
     h1
       a(href='/login')  TAP
