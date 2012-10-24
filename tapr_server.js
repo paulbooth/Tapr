@@ -22,7 +22,7 @@ app.use(express.static(__dirname + '/public'));
 app.get('/', function(req, res) {
   if (!req.session.access_token) {
     console.log("NO ACCESS TOKEN AT /")
-    res.redirect('/'); // Start the auth flow
+    res.redirect('/login'); // Start the auth flow
     return;
   }
 
@@ -103,7 +103,7 @@ app.get('/perms', function(req, res){
 app.get('/basicinfo', function(req, res) {
   if (!req.session.access_token) {
     console.log("NO ACCESS TOKEN AT Basic info.")
-    res.redirect('/'); // go home to start the auth process again
+    res.redirect('/login'); // go home to start the auth process again
     return;
   }
   var options = {
@@ -130,7 +130,7 @@ app.get('/basicinfo', function(req, res) {
 
 app.get('/logout', function(req, res) {
   if (!req.session.access_token) {
-    res.redirect('/');
+    res.redirect('/login');
     return;
   }
   var fbLogoutUri = 'https://www.facebook.com/logout.php?next=' + hostUrl + '/&access_token=' + req.session.access_token
