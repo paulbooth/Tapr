@@ -38,6 +38,7 @@ app.get('/', function(req, res) {
   }
 
   var locals = {user: req.session.user};
+  console.log(req.session.user);
   findMatches(req.session.user.id, function(matches) {
     locals.matches = matches;
     console.log("LOCALS HERE:");
