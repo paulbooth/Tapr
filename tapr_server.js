@@ -307,7 +307,7 @@ function findTaps(id, time, callback) {
             //taps += "\n" + item.uid + ":" + item.access_token;
             if (time - item.tap > TAP_CUTOFF_TIME) {
               console.log("removing:" + JSON.stringify(item) + " since time is " + (time - item.tap));
-              // collection.remove(item);
+              collection.remove(item);
             } else {
               taps.push(item.tap);
             }
@@ -349,8 +349,8 @@ function findUsers(callback) {
 
 function getMatchScore(taps1, taps2) {
 
-  l = Math.min(taps1.length, taps2.length);
-  score = 0;
+  var l = Math.min(taps1.length, taps2.length);
+  var score = 0;
   for (var i = 0; i < l; i++) {
     var tap1 = taps1[taps1.length - i],
       tap2 = taps2[taps2.length - i];
