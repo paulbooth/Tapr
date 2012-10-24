@@ -11,7 +11,8 @@ html(lang='en')
     div Tapr connects you.
     h1
       a(href='/tap')  TAP
-    ul(id='matches')
+    ul(id='matches') Matches
+      a(href='/') Reload
       - matches.forEach(function(match){
         li
           #{match.id} : #{match.score}
