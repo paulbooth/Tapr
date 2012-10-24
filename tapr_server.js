@@ -315,7 +315,7 @@ function findTaps(id, time, callback) {
           // Null signifies end of iterator
           if(item == null) {
             // db.close();
-            console.log("findTaps returning")
+            console.log("findTaps returning: " + taps)
             callback(taps);
           }
         });
