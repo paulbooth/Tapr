@@ -261,13 +261,14 @@ function addTap(id, tap, callback) {
 
 function addUser(id, callback) {
   // db.open(function(err, db) {
+    console.log("Trying to add user " + id)
     db.collection('users', function(err, collection) {
       collection.find({'id':id}, function(err, cursor) {
         var alreadyStored = false;
         cursor.each(function(err, item) {
           if(item != null) {
             alreadyStored = true;
-            console.log("User exists:" + id);
+            console.log("User exists:" + id + " see: " + item.id);
           }
           // Null signifies end of iterator
           if(item == null) {
