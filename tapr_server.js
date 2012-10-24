@@ -181,6 +181,29 @@ app.get('/taps', function(req, res) {
   });
 });
 
+app.get('/users', function(req, res) {
+  db.open(function(err, db) {
+    db.collection('users', function(err, collection) {
+      collection.find( function(err, cursor) {
+        var result = "users:";
+        cursor.each(function(err, item) {
+          if(item != null) {
+            console.dir(item);
+            //console.log("created at " + new Date(item._id.generationTime) + "\n")
+            result += "\n" + item.id;
+          }
+          // Null signifies end of iterator
+          if(item == null) {
+            db.close();
+            res.setHeader('Content-Type', 'text/plain');
+            res.send(result);
+          }
+        });
+      });          
+    });
+  });
+});
+
 app.listen(PORT_NUMBER);
 
 
