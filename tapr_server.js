@@ -229,10 +229,13 @@ function findMatches(id, callback) {
               var score = getMatchScore(mytaps, taps);
               console.log("done with score:" + score);
               matches.push({score: score, id: user.id });
+              console.log("new matches:" + matches);
             }
           });
+          console.log("done finding taps");
         }
       });
+      console.log("returning matches!");
       return matches;
     });
   });
