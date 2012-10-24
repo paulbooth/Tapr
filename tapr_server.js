@@ -237,11 +237,11 @@ function findMatches(id, callback) {
               console.log("done with score:" + score);
               matches.push({score: score, id: user.id });
               console.log("new matches:" + matches);
-              num_users_finished++;
-              if (num_users_finished == users.length) {
-                console.log("returning matches!");
-                callback(matches);
-              }
+            } 
+            num_users_finished++;
+            if (num_users_finished == users.length) {
+              console.log("returning matches!");
+              callback(matches);
             }
           });
           console.log("done finding taps");
