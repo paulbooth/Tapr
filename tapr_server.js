@@ -20,7 +20,6 @@ var mongo_port = process.env['MONGO_NODE_DRIVER_PORT'] != null ? process.env['MO
 
 console.log("Connecting to mongo at " + mongo_host + ":" + mongo_port);
 var db = new Db('taprdb', new Server(mongo_host, mongo_port, {}), {safe:false});
-db.open(function() {});
 // For cookies! So each person who connects is not all the same person
 var MemoryStore = require('connect').session.MemoryStore;
 app.use(express.cookieParser());
@@ -159,7 +158,7 @@ app.get('/logout', function(req, res) {
 });
 
 app.get('/taps', function(req, res) {
-  // db.open(function(err, db) {
+  db.open(function(err, db) {
     db.collection('taps', function(err, collection) {
       collection.find( function(err, cursor) {
         var result = "taps:";
@@ -178,11 +177,11 @@ app.get('/taps', function(req, res) {
         });
       });          
     });
-  // });
+  });
 });
 
 app.get('/users', function(req, res) {
-  // db.open(function(err, db) {
+  db.open(function(err, db) {
     db.collection('users', function(err, collection) {
       collection.find( function(err, cursor) {
         var result = "users:";
@@ -201,7 +200,7 @@ app.get('/users', function(req, res) {
         });
       });          
     });
-  // });
+  });
 });
 
 app.listen(PORT_NUMBER);
@@ -216,56 +215,39 @@ function findMatches(id, callback) {
       return;
     }
     console.log("accessing database");
-    // db.open(function(err, db) {
-      db.collection('users', function(err, collection) {
-        collection.find(function(err, cursor) {
-          var matches = [];
-          cursor.each(function(err, item) {
-            console.log("USER");
-            console.log(item);
-            if(item != null && item.id != id) {
-              //console.dir(item);
-              //console.log("created at " + new Date(item._id.generationTime) + "\n")
-              //matches += "\n" + item.uid + ":" + item.access_token;
-              console.log("finding taps for matchscore for id:" + item.id);
-              findTaps(item.id, function(taps) {
-                console.log("Found taps for id " + id + ":" + taps);
-                if (taps.length) {
-                  var score = getMatchScore(mytaps, taps);
-                  matches.push({score: score, item: item });
-                }
-              })
-              
-            }
-            // Null signifies end of iterator
-            if(item == null) {
-              console.log("end of database interaction for matches. " + matches);
-              // db.close();
-              matches = matches.sort(function(a, b) { return a.score - b.score;})
-              callback(matches);
+    findUsers(function(users){
+      users.forEach(function(user) {
+        if (user.id != id) {
+          console.log("finding taps for matchscore for id:" + item.id);
+
+          findTaps(user.id, function(taps) {
+            console.log("Found taps for id " + id + ":" + taps);
+            if (taps.length) {
+              var score = getMatchScore(mytaps, taps);
+              matches.push({score: score, item: item });
             }
           });
-        });          
+        }
       });
-    // });
+    });
   });
 }
 
 function addTap(id, tap, callback) {
   addUser(id, function() { 
-    // db.open(function(err, db) {
+    db.open(function(err, db) {
       db.collection('taps', function(err, collection) {        
         collection.insert({'id':id, 'tap':tap});
         console.log("added tap " + id + ":" + tap);
-        // db.close();
+        db.close();
         callback();
       });
-    // });
+    });
   });
 }
 
 function addUser(id, callback) {
-  // db.open(function(err, db) {
+  db.open(function(err, db) {
     console.log("Trying to add user " + id)
     db.collection('users', function(err, collection) {
       collection.find({'id':id}, function(err, cursor) {
@@ -281,21 +263,20 @@ function addUser(id, callback) {
               collection.insert({'id':id});
               console.log("Added user:" + id);
             }
-            // db.close();
+            db.close();
             callback();
           }
         });
       });
     });
-  // });
+  });
 }
 
 function findTaps(id, callback) {
   console.log("findtaps called:" + id);
-  // db.open(function(err, db) {
+  db.open(function(err, db) {
     db.collection('taps', function(err, collection) {
-      console.log(collection);
-      collection.find( function(err, cursor) {
+      collection.find({'id': id}, function(err, cursor) {
         var taps = [];
         cursor.each(function(err, item) {
           if(item != null) {
@@ -306,13 +287,36 @@ function findTaps(id, callback) {
           }
           // Null signifies end of iterator
           if(item == null) {
-            // db.close();
+            db.close();
             callback(taps);
           }
         });
       });          
     });
-  // });
+  });
+}
+
+function findUsers(callback) {
+  db.open(function(err, db) {
+    db.collection('users', function(err, collection) {
+      collection.find( function(err, cursor) {
+        var users = [];
+        cursor.each(function(err, item) {
+          if(item != null) {
+            console.dir(item);
+            //console.log("created at " + new Date(item._id.generationTime) + "\n")
+            //users += "\n" + item.uid + ":" + item.access_token;
+            users.push(item.tap);
+          }
+          // Null signifies end of iterator
+          if(item == null) {
+            db.close();
+            callback(users);
+          }
+        });
+      });          
+    });
+  });
 }
 
 function getMatchScore(taps1, taps2) {
