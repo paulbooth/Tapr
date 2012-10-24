@@ -22,6 +22,8 @@ var mongo_port = process.env['MONGO_NODE_DRIVER_PORT'] != null ? process.env['MO
 
 console.log("Connecting to mongo at " + mongo_host + ":" + mongo_port);
 var db = new Db('taprdb', new Server(mongo_host, mongo_port, {}), {safe:false});
+db.open(function() {});
+
 // For cookies! So each person who connects is not all the same person
 var MemoryStore = require('connect').session.MemoryStore;
 app.use(express.cookieParser());
@@ -160,7 +162,7 @@ app.get('/logout', function(req, res) {
 });
 
 app.get('/taps', function(req, res) {
-  db.open(function(err, db) {
+  // db.open(function(err, db) {
     db.collection('taps', function(err, collection) {
       collection.find( function(err, cursor) {
         var result = "taps:";
@@ -179,11 +181,11 @@ app.get('/taps', function(req, res) {
         });
       });          
     });
-  });
+  // });
 });
 
 app.get('/users', function(req, res) {
-  db.open(function(err, db) {
+  // db.open(function(err, db) {
     db.collection('users', function(err, collection) {
       collection.find( function(err, cursor) {
         var result = "users:";
@@ -202,7 +204,7 @@ app.get('/users', function(req, res) {
         });
       });          
     });
-  });
+  // });
 });
 
 app.listen(PORT_NUMBER);
@@ -252,19 +254,19 @@ function findMatches(id, callback) {
 
 function addTap(id, tap, callback) {
   addUser(id, function() { 
-    db.open(function(err, db) {
+    // db.open(function(err, db) {
       db.collection('taps', function(err, collection) {        
         collection.insert({'id':id, 'tap':tap});
         console.log("added tap " + id + ":" + tap);
         db.close();
         callback();
       });
-    });
+    // });
   });
 }
 
 function addUser(id, callback) {
-  db.open(function(err, db) {
+  // db.open(function(err, db) {
     console.log("Trying to add user " + id)
     db.collection('users', function(err, collection) {
       collection.find({'id':id}, function(err, cursor) {
@@ -286,14 +288,14 @@ function addUser(id, callback) {
         });
       });
     });
-  });
+  // });
 }
 
 
 // gets recent taps
 function findTaps(id, time, callback) {
   console.log("findtaps called:" + id);
-  db.open(function(err, db) {
+  // db.open(function(err, db) {
     db.collection('taps', function(err, collection) {
       collection.find({'id': id}, function(err, cursor) {
         var taps = [];
@@ -316,11 +318,11 @@ function findTaps(id, time, callback) {
         });
       });          
     });
-  });
+  // });
 }
 
 function findUsers(callback) {
-  db.open(function(err, db) {
+  // db.open(function(err, db) {
     db.collection('users', function(err, collection) {
       collection.find( function(err, cursor) {
         var users = [];
@@ -339,7 +341,7 @@ function findUsers(callback) {
         });
       });          
     });
-  });
+  // });
 }
 
 function getMatchScore(taps1, taps2) {
