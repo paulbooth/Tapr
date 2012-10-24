@@ -185,7 +185,9 @@ app.listen(PORT_NUMBER);
 
 
 function findMatches(id, callback) {
+  console.log ("trying to find matches for " + id);
   findTaps(id, function(mytaps) {
+    console.log("" + id + " has the following taps:" + mytaps);
     if (!mytaps.length) {
       callback([]);
       return;
