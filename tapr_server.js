@@ -53,8 +53,9 @@ app.get('/tap', function(req, res) {
     res.redirect('/login');
     return;
   }
-  addTap(req.session.access_token, (new Date()).getTime());
-  res.redirect('/');
+  addTap(req.session.access_token, (new Date()).getTime(), function() {
+    res.redirect('/');
+  });
 });
 
 // First part of Facebook auth dance
@@ -218,18 +219,20 @@ function findMatches(id, callback) {
   });
 }
 
-function addTap(id, tap) {
-  addUser(id);
-  db.open(function(err, db) {
-    db.collection('taps', function(err, collection) {        
-      collection.insert({'id':id, 'tap':tap});
-      console.log("added tag " + id + ":" + tap);
-      db.close();
+function addTap(id, tap, callback) {
+  addUser(id, function() { 
+    db.open(function(err, db) {
+      db.collection('taps', function(err, collection) {        
+        collection.insert({'id':id, 'tap':tap});
+        console.log("added tag " + id + ":" + tap);
+        db.close();
+        callback();
+      });
     });
   });
 }
 
-function addUser(id) {
+function addUser(id, callback) {
   db.open(function(err, db) {
     db.collection('uses', function(err, collection) {
       collection.find(function(err, cursor) {
@@ -246,6 +249,7 @@ function addUser(id) {
               console.log("Added user:" + id);
             }
             db.close();
+            callback();
           }
         });
       });
