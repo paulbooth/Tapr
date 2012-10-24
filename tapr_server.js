@@ -20,7 +20,7 @@ var mongo_port = process.env['MONGO_NODE_DRIVER_PORT'] != null ? process.env['MO
 
 console.log("Connecting to mongo at " + mongo_host + ":" + mongo_port);
 var db = new Db('taprdb', new Server(mongo_host, mongo_port, {}), {safe:false});
-
+db.open();
 // For cookies! So each person who connects is not all the same person
 var MemoryStore = require('connect').session.MemoryStore;
 app.use(express.cookieParser());
@@ -159,7 +159,7 @@ app.get('/logout', function(req, res) {
 });
 
 app.get('/taps', function(req, res) {
-  db.open(function(err, db) {
+  // db.open(function(err, db) {
     db.collection('taps', function(err, collection) {
       collection.find( function(err, cursor) {
         var result = "taps:";
@@ -171,18 +171,18 @@ app.get('/taps', function(req, res) {
           }
           // Null signifies end of iterator
           if(item == null) {
-            db.close();
+            // db.close();
             res.setHeader('Content-Type', 'text/plain');
             res.send(result);
           }
         });
       });          
     });
-  });
+  // });
 });
 
 app.get('/users', function(req, res) {
-  db.open(function(err, db) {
+  // db.open(function(err, db) {
     db.collection('users', function(err, collection) {
       collection.find( function(err, cursor) {
         var result = "users:";
@@ -194,14 +194,14 @@ app.get('/users', function(req, res) {
           }
           // Null signifies end of iterator
           if(item == null) {
-            db.close();
+            // db.close();
             res.setHeader('Content-Type', 'text/plain');
             res.send(result);
           }
         });
       });          
     });
-  });
+  // });
 });
 
 app.listen(PORT_NUMBER);
@@ -215,7 +215,7 @@ function findMatches(id, callback) {
       callback([]);
       return;
     }
-    db.open(function(err, db) {
+    // db.open(function(err, db) {
       db.collection('users', function(err, collection) {
         collection.find(function(err, cursor) {
           var matches = [];
@@ -235,32 +235,32 @@ function findMatches(id, callback) {
             }
             // Null signifies end of iterator
             if(item == null) {
-              db.close();
+              // db.close();
               matches = matches.sort(function(a, b) { return a.score - b.score;})
               callback(matches);
             }
           });
         });          
       });
-    });
+    // });
   });
 }
 
 function addTap(id, tap, callback) {
   addUser(id, function() { 
-    db.open(function(err, db) {
+    // db.open(function(err, db) {
       db.collection('taps', function(err, collection) {        
         collection.insert({'id':id, 'tap':tap});
         console.log("added tap " + id + ":" + tap);
-        db.close();
+        // db.close();
         callback();
       });
-    });
+    // });
   });
 }
 
 function addUser(id, callback) {
-  db.open(function(err, db) {
+  // db.open(function(err, db) {
     db.collection('users', function(err, collection) {
       collection.find(function(err, cursor) {
         var alreadyStored = false;
@@ -275,17 +275,17 @@ function addUser(id, callback) {
               collection.insert({'id':id});
               console.log("Added user:" + id);
             }
-            db.close();
+            // db.close();
             callback();
           }
         });
       });
     });
-  });
+  // });
 }
 
 function findTaps(id, callback) {
-  db.open(function(err, db) {
+  // db.open(function(err, db) {
     db.collection('taps', function(err, collection) {
       collection.find({'id': id}, function(err, cursor) {
         var taps = [];
@@ -298,13 +298,13 @@ function findTaps(id, callback) {
           }
           // Null signifies end of iterator
           if(item == null) {
-            db.close();
+            // db.close();
             callback(taps);
           }
         });
       });          
     });
-  });
+  // });
 }
 
 function getMatchScore(taps1, taps2) {
