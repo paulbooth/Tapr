@@ -262,7 +262,7 @@ function addTap(id, tap, callback) {
 function addUser(id, callback) {
   // db.open(function(err, db) {
     db.collection('users', function(err, collection) {
-      collection.find(function(err, cursor) {
+      collection.find({'id':id}, function(err, cursor) {
         var alreadyStored = false;
         cursor.each(function(err, item) {
           if(item != null) {
