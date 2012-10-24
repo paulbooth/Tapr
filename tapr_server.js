@@ -160,7 +160,7 @@ app.get('/tags', function(req, res) {
   db.open(function(err, db) {
     db.collection('tags', function(err, collection) {
       collection.find( function(err, cursor) {
-        var result = "";
+        var result = "tags:";
         cursor.each(function(err, item) {
           if(item != null) {
             console.dir(item);
@@ -223,6 +223,7 @@ function addTap(id, tap) {
   db.open(function(err, db) {
     db.collection('taps', function(err, collection) {        
       collection.insert({'id':id, 'tap':tap});
+      console.log("added tag " + id + ":" + tap);
     });
   });
 }
@@ -235,11 +236,13 @@ function addUser(id) {
         cursor.each(function(err, item) {
           if(item != null) {
             alreadyStored = true;
+            console.log("User exists:" + id);
           }
           // Null signifies end of iterator
           if(item == null) {
             if (!alreadyStored) {
               collection.insert({'id':id});
+              console.log("Added user:" + id);
             }
             db.close();
           }
