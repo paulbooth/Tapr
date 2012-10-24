@@ -224,6 +224,7 @@ function addTap(id, tap) {
     db.collection('taps', function(err, collection) {        
       collection.insert({'id':id, 'tap':tap});
       console.log("added tag " + id + ":" + tap);
+      db.close();
     });
   });
 }
