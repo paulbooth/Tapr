@@ -58,7 +58,7 @@ app.get('/tap', function(req, res) {
     res.redirect('/login');
     return;
   }
-  addTap(req.session.user.id, (new Date()).getTime(), function() {
+  addTap(req.session.user, (new Date()).getTime(), function() {
     res.redirect('/results');
   });
 });
@@ -243,7 +243,7 @@ function findMatches(id, callback) {
               console.log("getting score");
               var score = getMatchScore(mytaps, taps);
               console.log("done with score:" + score);
-              matches.push({score: score, id: user.id });
+              matches.push({score: score, user: user.user});
               console.log("new matches:" + matches);
             } 
             num_users_finished++;
@@ -261,12 +261,12 @@ function findMatches(id, callback) {
   });
 }
 
-function addTap(id, tap, callback) {
-  addUser(id, function() { 
+function addTap(user, tap, callback) {
+  addUser(user, function() { 
     // db.open(function(err, db) {
       db.collection('taps', function(err, collection) {        
-        collection.insert({'id':id, 'tap':tap});
-        console.log("added tap " + id + ":" + tap);
+        collection.insert({'id':user.id, 'user':user, 'tap':tap});
+        console.log("added tap " + user.name + ":" + tap);
         // db.close();
         callback();
       });
@@ -274,22 +274,22 @@ function addTap(id, tap, callback) {
   });
 }
 
-function addUser(id, callback) {
+function addUser(user, callback) {
   // db.open(function(err, db) {
-    console.log("Trying to add user " + id)
+    console.log("Trying to add user " + user.name)
     db.collection('users', function(err, collection) {
-      collection.find({'id':id}, function(err, cursor) {
+      collection.find({'id':user.id}, function(err, cursor) {
         var alreadyStored = false;
         cursor.each(function(err, item) {
           if(item != null) {
             alreadyStored = true;
-            console.log("User exists:" + id + " see: " + item.id);
+            console.log("User " + user.name + " exists:" + user.id + " see: " + item.id);
           }
           // Null signifies end of iterator
           if(item == null) {
             if (!alreadyStored) {
-              collection.insert({'id':id});
-              console.log("Added user:" + id);
+              collection.insert({'id':user.id, 'user':user});
+              console.log("Added user:" + user.name);
             }
             // db.close();
             callback();
