@@ -234,7 +234,7 @@ function findMatches(id, callback) {
               num_users_finished++;
               if (num_users_finished == users.length) {
                 console.log("returning matches!");
-                return matches;
+                callback(matches);
               }
             }
           });
