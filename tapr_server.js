@@ -217,7 +217,8 @@ function findMatches(id, callback) {
     console.log("accessing database");
     findUsers(function(users){
       var matches = [];
-      users.forEach(function(user) {
+      var num_users_finished = 0;
+      users.forEach(function(user) { 
         console.log(user.id);
         if (user.id != id) {
           console.log("finding taps for matchscore for id:" + user.id);
@@ -230,13 +231,18 @@ function findMatches(id, callback) {
               console.log("done with score:" + score);
               matches.push({score: score, id: user.id });
               console.log("new matches:" + matches);
+              num_users_finished++;
+              if (num_users_finished == users.length) {
+                console.log("returning matches!");
+                return matches;
+              }
             }
           });
           console.log("done finding taps");
+        } else {
+          num_users_finished++;
         }
       });
-      console.log("returning matches!");
-      return matches;
     });
   });
 }
