@@ -20,7 +20,7 @@ var mongo_port = process.env['MONGO_NODE_DRIVER_PORT'] != null ? process.env['MO
 
 console.log("Connecting to mongo at " + mongo_host + ":" + mongo_port);
 var db = new Db('taprdb', new Server(mongo_host, mongo_port, {}), {safe:false});
-db.open();
+db.open(function() {});
 // For cookies! So each person who connects is not all the same person
 var MemoryStore = require('connect').session.MemoryStore;
 app.use(express.cookieParser());
