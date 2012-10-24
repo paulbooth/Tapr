@@ -14,6 +14,7 @@ html(lang='en')
     ul(id='matches') Matches 
       a(href='/') Reload
       - matches.forEach(function(match){
-        li
-          #{match.user["name"]} : #{match.score} : #{JSON.stringify(match.user)}
+        li 
+          a(href='#{match.user.link}') #{match.user["name"]}
+          | : #{match.score}
       - })
