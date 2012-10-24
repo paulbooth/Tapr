@@ -210,11 +210,12 @@ app.listen(PORT_NUMBER);
 function findMatches(id, callback) {
   console.log ("trying to find matches for " + id);
   findTaps(id, function(mytaps) {
-    console.log("" + id + " has the following taps:" + mytaps);
+    console.log("First step, " + id + " has the following taps:" + mytaps);
     if (!mytaps.length) {
       callback([]);
       return;
     }
+    console.log("accessing database");
     // db.open(function(err, db) {
       db.collection('users', function(err, collection) {
         collection.find(function(err, cursor) {
@@ -237,6 +238,7 @@ function findMatches(id, callback) {
             }
             // Null signifies end of iterator
             if(item == null) {
+              console.log("end of database interaction for matches. " + matches);
               // db.close();
               matches = matches.sort(function(a, b) { return a.score - b.score;})
               callback(matches);
