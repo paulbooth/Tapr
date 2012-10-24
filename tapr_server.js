@@ -157,16 +157,16 @@ app.get('/logout', function(req, res) {
   res.redirect(fbLogoutUri);
 });
 
-app.get('/tags', function(req, res) {
+app.get('/taps', function(req, res) {
   db.open(function(err, db) {
-    db.collection('tags', function(err, collection) {
+    db.collection('taps', function(err, collection) {
       collection.find( function(err, cursor) {
-        var result = "tags:";
+        var result = "taps:";
         cursor.each(function(err, item) {
           if(item != null) {
             console.dir(item);
             //console.log("created at " + new Date(item._id.generationTime) + "\n")
-            result += "\n" + item.id + ":" + item.tag;
+            result += "\n" + item.id + ":" + item.tap;
           }
           // Null signifies end of iterator
           if(item == null) {
@@ -224,7 +224,7 @@ function addTap(id, tap, callback) {
     db.open(function(err, db) {
       db.collection('taps', function(err, collection) {        
         collection.insert({'id':id, 'tap':tap});
-        console.log("added tag " + id + ":" + tap);
+        console.log("added tap " + id + ":" + tap);
         db.close();
         callback();
       });
@@ -267,7 +267,7 @@ function findTaps(id, callback) {
             console.dir(item);
             //console.log("created at " + new Date(item._id.generationTime) + "\n")
             //taps += "\n" + item.uid + ":" + item.access_token;
-            taps.push(item.tag);
+            taps.push(item.tap);
           }
           // Null signifies end of iterator
           if(item == null) {
