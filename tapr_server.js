@@ -294,6 +294,7 @@ function findTaps(id, callback) {
   console.log("findtaps called:" + id);
   // db.open(function(err, db) {
     db.collection('taps', function(err, collection) {
+      console.log(JSON.stringify(collection, undefined, 2));
       collection.find({'id': id}, function(err, cursor) {
         var taps = [];
         cursor.each(function(err, item) {
