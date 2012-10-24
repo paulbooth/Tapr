@@ -229,7 +229,7 @@ function addUser(id) {
 function findTaps(id, callback) {
   db.open(function(err, db) {
     db.collection('taps', function(err, collection) {
-      collection.find({'id', id}, function(err, cursor) {
+      collection.find({'id': id}, function(err, cursor) {
         var taps = [];
         cursor.each(function(err, item) {
           if(item != null) {
