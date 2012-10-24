@@ -5,14 +5,14 @@ html(lang='en')
     title Tapr
     link(rel='stylesheet', href='bootstrap/css/bootstrap.min.css')
   body
-    h1 Tapr welcomes #{user.name}
+    h2 Tapr welcomes #{user.name}
     div
       a(href='/logout') logout
     div Tapr connects you.
     h1
-      a(href='/tap', style='font-size:150px;')  TAP
+      a(href='/tap')  TAP
     ul(id='matches') Matches 
-      h1
+      h2
         a(href='/') Reload
       - matches.forEach(function(match){
         li 
