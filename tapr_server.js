@@ -59,7 +59,9 @@ app.get('/tap', function(req, res) {
     return;
   }
   addTap(req.session.user, (new Date()).getTime(), function() {
-    res.redirect('/results');
+    setTimeout(function() {
+      res.redirect('/');
+    }, 1000);
   });
 });
 

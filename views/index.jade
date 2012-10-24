@@ -12,7 +12,8 @@ html(lang='en')
     h1
       a(href='/tap')  TAP
     ul(id='matches') Matches 
-      a(href='/') Reload
+      h1
+        a(href='/') Reload
       - matches.forEach(function(match){
         li 
           a(href='#{match.user.link}') #{match.user["name"]}
