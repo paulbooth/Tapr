@@ -216,6 +216,7 @@ function findMatches(id, callback) {
     }
     console.log("accessing database");
     findUsers(function(users){
+      var matches = [];
       users.forEach(function(user) {
         console.log(user.id);
         if (user.id != id) {
@@ -229,6 +230,7 @@ function findMatches(id, callback) {
           });
         }
       });
+      return matches;
     });
   });
 }
