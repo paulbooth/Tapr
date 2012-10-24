@@ -306,6 +306,7 @@ function findTaps(id, time, callback) {
             //taps += "\n" + item.uid + ":" + item.access_token;
             if (time - item.tap > TAP_CUTOFF_TIME) {
               collection.remove(item);
+              console.log("removing:" + JSON.stringify(item))
             } else {
               taps.push(item.tap);
             }
