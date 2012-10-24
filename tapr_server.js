@@ -265,21 +265,21 @@ function getMatchScore(taps1, taps2) {
 function DTWDistance(s, t) {
     n = s.length; m = t.length;
 
-    declare int DTW[0..n, 0..m]
-    declare int i, j, cost
+    // declare int DTW[0..n, 0..m]
+    // declare int i, j, cost
 
-    for i := 1 to m
-        DTW[0, i] := infinity
-    for i := 1 to n
-        DTW[i, 0] := infinity
-    DTW[0, 0] := 0
+    // for i := 1 to m
+    //     DTW[0, i] := infinity
+    // for i := 1 to n
+    //     DTW[i, 0] := infinity
+    // DTW[0, 0] := 0
 
-    for i := 1 to n
-        for j := 1 to m
-            cost:= d(s[i], t[j])
-            DTW[i, j] := cost + minimum(DTW[i-1, j  ],    // insertion
-                                        DTW[i  , j-1],    // deletion
-                                        DTW[i-1, j-1])    // match
+    // for i := 1 to n
+    //     for j := 1 to m
+    //         cost:= d(s[i], t[j])
+    //         DTW[i, j] := cost + minimum(DTW[i-1, j  ],    // insertion
+    //                                     DTW[i  , j-1],    // deletion
+    //                                     DTW[i-1, j-1])    // match
 
-    return DTW[n, m]
+    // return DTW[n, m]
 }
